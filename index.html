@@ -616,32 +616,34 @@
         email: '',
         async submitForm() {
             this.state = 'loading';
-            // URL DEL WEBHOOK DE MAKE (El usuario debe poner la suya aquí)
-            const webhookUrl = 'https://hook.us1.make.com/48q96j0gh1tjf0e3agwjtqr2wol78b8m';
+            const webhookUrl = 'https://hook.us1.make.com/48q96j0gh1tjf0e3agwjtqr2wol78b8m'; // <--- OJO: Debes cambiar esto
+
+            if (webhookUrl === 'TU_URL_DE_MAKE_AQUI') {
+                alert('⚠️ ERROR: Aún no has puesto tu URL de Make en el código. Busca la línea que dice const webhookUrl = ... y pega tu enlace.');
+                this.state = 'idle';
+                return;
+            }
 
             try {
-                // Solo ejecutar si no es la URL de ejemplo
-                if (webhookUrl !== 'https://hook.us1.make.com/48q96j0gh1tjf0e3agwjtqr2wol78b8m') {
-                    const response = await fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: this.email, source: 'Landing B2B', date: new Date().toISOString() })
-                    });
-                    
-                    if (response.ok) {
-                        this.state = 'success';
-                    } else {
-                        alert('Hubo un error al enviar. Por favor intenta de nuevo.');
-                        this.state = 'idle';
-                    }
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: this.email, 
+                        source: 'Landing B2B', 
+                        date: new Date().toLocaleString() 
+                    })
+                });
+                
+                if (response.ok) {
+                    this.state = 'success';
                 } else {
-                    // Fallback para demo
-                    setTimeout(() => this.state = 'success', 1000);
+                    throw new Error('Error ' + response.status + ': ' + response.statusText);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                // Fallback para demo si falla
-                setTimeout(() => this.state = 'success', 1000);
+                console.error(error);
+                alert('❌ ERROR DE CONEXIÓN:\n' + error.message + '\n\nAsegúrate de que la URL de Make sea correcta.');
+                this.state = 'idle';
             }
         }
     }">
