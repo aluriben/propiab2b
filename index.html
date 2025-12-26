@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matchprop Partners | Red Inmobiliaria Colaborativa</title>
+    <meta name="description" content="Plataforma para inmobiliarias. Monetiza leads descartados y cierra ventas cruzadas.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine JS (Para la interactividad) -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Configuración personalizada de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: '#2563eb', // Azul profesional B2B
+                        'brand-dark': '#1e40af',
+                        dark: '#0f172a',
+                        surface: '#f8fafc'
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                        'glow': '0 0 20px rgba(37, 99, 235, 0.15)'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        [x-cloak] { display: none !important; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Efecto sutil de gradiente en texto */
+        .text-gradient {
+            background: linear-gradient(to right, #2563eb, #0ea5e9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Estilos para el acordeón de FAQ */
+        .faq-content { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="font-sans text-slate-600 antialiased bg-slate-50" x-data="{ mobileMenu: false, activeModal: null }">
+
+    <!-- NAVEGACIÓN -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-9 h-9 bg-brand rounded-lg flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-brand/20">M</div>
+                    <div class="flex flex-col leading-none">
+                        <span class="text-xl font-bold text-slate-900 tracking-tight">Match<span class="text-brand">prop</span></span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Partners</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#funcionamiento" class="text-slate-600 hover:text-brand font-medium transition text-sm">Cómo funciona</a>
+                    <a href="#plataforma" class="text-slate-600 hover:text-brand font-medium transition text-sm">Plataforma</a>
+                    <a href="#faq" class="text-slate-600 hover:text-brand font-medium transition text-sm">Preguntas Frecuentes</a>
+                    <a href="#registro" class="bg-slate-900 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-800 transition shadow-lg shadow-slate-900/10 transform hover:-translate-y-0.5">
+                        Acceso Inmobiliarias
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button @click="mobileMenu = !mobileMenu" class="md:hidden text-slate-700 focus:outline-none p-2 rounded-md hover:bg-slate-100">
+                    <i class="fa-solid fa-bars text-xl" x-show="!mobileMenu"></i>
+                    <i class="fa-solid fa-xmark text-xl" x-show="mobileMenu" x-cloak></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div x-show="mobileMenu" x-cloak x-transition.origin.top class="md:hidden bg-white border-b border-slate-100 absolute w-full shadow-xl">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#funcionamiento" @click="mobileMenu = false" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">Cómo funciona</a>
+                <a href="#plataforma" @click="mobileMenu = false" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">Plataforma</a>
+                <a href="#faq" @click="mobileMenu = false" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand">Preguntas Frecuentes</a>
+                <a href="#registro" @click="mobileMenu = false" class="block mt-4 text-center px-3 py-3 rounded-md text-base font-bold bg-brand text-white">Solicitar Acceso</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="pt-32 pb-16 lg:pt-48 lg:pb-32 relative overflow-hidden">
+        <!-- Decoración de fondo -->
+        <div class="absolute top-0 right-0 w-full lg:w-1/2 h-full bg-gradient-to-bl from-blue-50 via-white to-white -z-10"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-brand/5 rounded-full blur-[80px] -z-10"></div>
+        <div class="absolute top-20 right-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-[60px] -z-10"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-left space-y-8 relative z-10 flex flex-col items-center lg:items-start">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white text-brand font-semibold text-xs uppercase tracking-wider border border-slate-200 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        RED INMOBILIARIA COLABORATIVA
+                    </div>
+                    
+                    <div class="space-y-6 max-w-2xl">
+                        <h1 class="text-4xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] tracking-tight">
+                            Monetiza los leads que <br class="hidden lg:block"> 
+                            <span class="text-gradient">tu equipo descarta.</span>
+                        </h1>
+                        
+                        <h2 class="text-2xl lg:text-3xl font-bold text-slate-800 leading-snug pl-0 lg:pl-1 border-l-4 border-transparent lg:border-brand/20">
+                            El 95% de tus leads no compran. <br>
+                            <span class="text-brand">Ahora puedes venderlos.</span>
+                        </h2>
+                    </div>
+                    
+                    <p class="text-lg lg:text-xl text-slate-500 max-w-xl leading-relaxed">
+                        Deja de tirar dinero a la basura. Sube a Matchprop los clientes que no encajan con tu inventario actual y gana comisiones automáticas cuando compren en otros proyectos aliados.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start pt-2">
+                        <a href="#registro" class="px-8 py-4 bg-brand hover:bg-brand-dark text-white rounded-xl font-bold shadow-xl shadow-brand/20 transition transform hover:-translate-y-1 text-center flex items-center justify-center gap-2">
+                            Empezar ahora <i class="fa-solid fa-arrow-right text-sm"></i>
+                        </a>
+                        <button onclick="document.getElementById('plataforma').scrollIntoView()" class="px-8 py-4 bg-white border border-slate-200 hover:border-brand/50 text-slate-700 hover:text-brand rounded-xl font-bold transition flex items-center justify-center gap-2 shadow-sm group">
+                            <i class="fa-solid fa-play text-brand/80 group-hover:text-brand"></i> Ver Demo
+                        </button>
+                    </div>
+                    
+                    <div class="pt-6 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6 text-sm text-slate-400 font-medium border-t border-slate-100 mt-4 lg:border-none lg:mt-0 w-full">
+                        <span class="flex items-center gap-2 mt-4 lg:mt-0"><i class="fa-solid fa-shield-halved text-brand"></i> Leads 100% Anónimos</span>
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-file-contract text-brand"></i> Comisión Garantizada</span>
+                    </div>
+                </div>
+
+                <!-- Hero Image / Mockup Abstracto -->
+                <div class="relative hidden lg:block h-[500px]">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-brand/10 to-transparent rounded-full blur-3xl transform translate-x-10 translate-y-10"></div>
+                    
+                    <!-- Tarjeta Flotante Principal -->
+                    <div class="absolute top-10 left-10 right-10 bottom-10 bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 animate-float flex flex-col">
+                        <!-- Header Mockup -->
+                        <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-brand rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-chart-pie"></i></div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-800">Dashboard de Ventas</div>
+                                    <div class="text-xs text-slate-400">Constructora Elite S.A.S</div>
+                                </div>
+                            </div>
+                            <div class="text-green-600 font-bold text-sm bg-green-50 px-3 py-1 rounded-full border border-green-100 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Online
+                            </div>
+                        </div>
+
+                        <!-- Content Mockup -->
+                        <div class="grid grid-cols-2 gap-4 flex-1">
+                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 flex flex-col justify-center items-center text-center">
+                                <div class="w-12 h-12 bg-blue-100 text-brand rounded-full flex items-center justify-center mb-2 text-xl"><i class="fa-solid fa-users"></i></div>
+                                <div class="text-2xl font-black text-slate-900">1,240</div>
+                                <div class="text-xs text-slate-500 font-bold uppercase">Leads Subidos</div>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 flex flex-col justify-center items-center text-center">
+                                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-2 text-xl"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                                <div class="text-2xl font-black text-slate-900">$14.5M</div>
+                                <div class="text-xs text-slate-500 font-bold uppercase">Ganancias Extra</div>
+                            </div>
+                            <div class="col-span-2 bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl p-5 text-white flex justify-between items-center shadow-lg">
+                                <div>
+                                    <div class="text-xs text-slate-400 uppercase font-bold mb-1">Nueva Oferta de Match</div>
+                                    <div class="font-bold text-lg">Cliente busca en "Chicó Norte"</div>
+                                </div>
+                                <button class="bg-brand hover:bg-brand-dark text-white px-4 py-2 rounded-lg text-sm font-bold transition">Ver</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Elemento flotante decorativo -->
+                    <div class="absolute -right-4 bottom-20 bg-white p-4 rounded-xl shadow-xl border border-slate-100 animate-bounce" style="animation-duration: 3s;">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-green-100 p-2 rounded-full text-green-600"><i class="fa-solid fa-check"></i></div>
+                            <div>
+                                <div class="text-xs text-slate-400 font-bold">Comisión Recibida</div>
+                                <div class="text-sm font-black text-slate-800">+$ 2.450.000 COP</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CÓMO FUNCIONA -->
+    <section id="funcionamiento" class="py-20 bg-slate-50 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-brand font-bold uppercase tracking-widest text-xs mb-2">Proceso Simple</h2>
+                <h3 class="text-3xl font-bold text-slate-900 mb-4">Del "No me interesa" al "Venta Cerrada"</h3>
+                <p class="text-slate-500">
+                    Tu equipo comercial descarta cientos de leads al mes porque buscan otra zona, otro precio o otro tipo de inmueble. 
+                    Matchprop convierte esos descartes en oportunidades.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 relative">
+                <!-- Línea conectora (Desktop) -->
+                <div class="hidden md:block absolute top-12 left-[20%] right-[20%] h-0.5 bg-slate-200 border-t-2 border-dashed border-slate-300 z-0"></div>
+
+                <!-- Paso 1 -->
+                <div class="relative z-10 bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group">
+                    <div class="w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg shadow-slate-900/20 group-hover:scale-110 transition-transform">1</div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-3 text-center">Sube tus Leads</h4>
+                    <p class="text-slate-500 text-sm text-center leading-relaxed">
+                        Exporta de tu CRM (Salesforce, HubSpot, Wasi) y sube el CSV. Los datos de contacto se encriptan; solo compartimos el perfil de búsqueda.
+                    </p>
+                </div>
+
+                <!-- Paso 2 -->
+                <div class="relative z-10 bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group">
+                    <div class="w-16 h-16 bg-brand text-white rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg shadow-brand/20 group-hover:scale-110 transition-transform">2</div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-3 text-center">Matchmaking IA</h4>
+                    <p class="text-slate-500 text-sm text-center leading-relaxed">
+                        Nuestro algoritmo cruza: <i>"Lead busca Apto 3H en Norte"</i> con <i>"Inmobiliaria X tiene Proyecto en Norte"</i>. ¡Bingo!
+                    </p>
+                </div>
+
+                <!-- Paso 3 -->
+                <div class="relative z-10 bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group">
+                    <div class="w-16 h-16 bg-green-500 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg shadow-green-500/20 group-hover:scale-110 transition-transform">3</div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-3 text-center">Gana Comisión</h4>
+                    <p class="text-slate-500 text-sm text-center leading-relaxed">
+                        Si el lead compra en el otro proyecto, recibes automáticamente tu parte de la comisión. Sin llamadas, sin gestión.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT TOUR INTERACTIVO -->
+    <section id="plataforma" class="py-24 bg-white overflow-hidden" x-data="{ currentTab: 'dashboard' }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12">
+                
+                <!-- Columna Izquierda: Control -->
+                <div class="lg:col-span-4 space-y-8 self-center">
+                    <div>
+                        <h2 class="text-brand font-bold uppercase tracking-widest text-xs mb-2">Tu Centro de Comando</h2>
+                        <h3 class="text-4xl font-bold text-slate-900 mb-4">Todo en un solo lugar</h3>
+                        <p class="text-slate-500">
+                            Una interfaz diseñada para gerentes comerciales y directores de expansión. Control total sobre tus datos y tus ingresos.
+                        </p>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button @click="currentTab = 'dashboard'" 
+                                class="w-full text-left px-6 py-4 rounded-xl border transition flex items-center gap-4 group"
+                                :class="currentTab === 'dashboard' ? 'bg-slate-900 border-slate-900 text-white shadow-lg' : 'bg-white border-slate-200 text-slate-600 hover:border-brand/50'">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+                                 :class="currentTab === 'dashboard' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover:text-brand'">
+                                <i class="fa-solid fa-chart-pie"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold">Dashboard General</div>
+                                <div class="text-xs opacity-70">Resumen de actividad e ingresos</div>
+                            </div>
+                        </button>
+
+                        <button @click="currentTab = 'ofertas'" 
+                                class="w-full text-left px-6 py-4 rounded-xl border transition flex items-center gap-4 group"
+                                :class="currentTab === 'ofertas' ? 'bg-slate-900 border-slate-900 text-white shadow-lg' : 'bg-white border-slate-200 text-slate-600 hover:border-brand/50'">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+                                 :class="currentTab === 'ofertas' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover:text-brand'">
+                                <i class="fa-solid fa-bell"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold">Gestión de Ofertas</div>
+                                <div class="text-xs opacity-70">Acepta o rechaza oportunidades</div>
+                            </div>
+                        </button>
+
+                        <button @click="currentTab = 'comisiones'" 
+                                class="w-full text-left px-6 py-4 rounded-xl border transition flex items-center gap-4 group"
+                                :class="currentTab === 'comisiones' ? 'bg-slate-900 border-slate-900 text-white shadow-lg' : 'bg-white border-slate-200 text-slate-600 hover:border-brand/50'">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+                                 :class="currentTab === 'comisiones' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover:text-brand'">
+                                <i class="fa-solid fa-money-bill-transfer"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold">Comisiones y Pagos</div>
+                                <div class="text-xs opacity-70">Historial de revenue share</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Mockup Visual -->
+                <div class="lg:col-span-8 relative">
+                    <!-- Decoración fondo mockup -->
+                    <div class="absolute -top-10 -right-10 w-[400px] h-[400px] bg-brand/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+                    <!-- Browser Window -->
+                    <div class="bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden relative z-10 flex flex-col h-[550px] md:h-[600px]">
+                        <!-- Browser Header -->
+                        <div class="bg-slate-50 border-b border-slate-200 px-4 py-3 flex items-center gap-4 shrink-0">
+                            <div class="flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                            </div>
+                            <div class="flex-1 bg-white border border-slate-200 h-8 rounded-md flex items-center px-3 text-xs text-slate-400 font-mono shadow-sm">
+                                <i class="fa-solid fa-lock mr-2 text-green-500"></i> app.matchprop-partners.com/dashboard
+                            </div>
+                        </div>
+
+                        <!-- App Layout -->
+                        <div class="flex flex-1 overflow-hidden">
+                            <!-- Sidebar App (Desktop) -->
+                            <div class="hidden md:flex w-56 bg-white border-r border-slate-100 flex-col p-4 shrink-0">
+                                <div class="font-bold text-slate-800 text-lg mb-8 px-2 tracking-tight">Matchprop</div>
+                                <nav class="space-y-1">
+                                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors" :class="currentTab === 'dashboard' ? 'bg-blue-50 text-brand' : 'text-slate-500 hover:bg-slate-50'">
+                                        <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
+                                    </a>
+                                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 transition-colors">
+                                        <i class="fa-solid fa-building w-5 text-center"></i> Inmuebles
+                                    </a>
+                                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 transition-colors">
+                                        <i class="fa-solid fa-users w-5 text-center"></i> Leads
+                                    </a>
+                                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors" :class="currentTab === 'ofertas' ? 'bg-blue-50 text-brand' : 'text-slate-500 hover:bg-slate-50'">
+                                        <i class="fa-solid fa-bell w-5 text-center"></i> Ofertas <span class="ml-auto bg-red-500 text-white text-[10px] px-1.5 rounded-full">3</span>
+                                    </a>
+                                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors" :class="currentTab === 'comisiones' ? 'bg-blue-50 text-brand' : 'text-slate-500 hover:bg-slate-50'">
+                                        <i class="fa-solid fa-money-bill w-5 text-center"></i> Pagos
+                                    </a>
+                                </nav>
+                            </div>
+
+                            <!-- Main Content Area -->
+                            <div class="flex-1 bg-surface relative overflow-y-auto p-4 md:p-8">
+                                
+                                <!-- VIEW: DASHBOARD -->
+                                <div x-show="currentTab === 'dashboard'" x-transition.opacity.duration.300ms class="space-y-6">
+                                    <div class="flex justify-between items-end">
+                                        <div>
+                                            <h2 class="text-xl md:text-2xl font-bold text-slate-800">Hola, Alfredo 👋</h2>
+                                            <p class="text-sm text-slate-500">Aquí está el resumen de hoy.</p>
+                                        </div>
+                                        <button class="text-xs font-bold text-brand bg-white border border-slate-200 px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition">
+                                            <i class="fa-solid fa-download mr-1"></i> Reporte
+                                        </button>
+                                    </div>
+
+                                    <!-- KPI Cards -->
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="bg-blue-600 text-white p-5 rounded-xl shadow-lg relative overflow-hidden">
+                                            <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fa-solid fa-wand-magic-sparkles text-6xl"></i></div>
+                                            <div class="relative z-10">
+                                                <p class="text-blue-100 text-xs font-bold uppercase mb-1">Oportunidades</p>
+                                                <h3 class="text-3xl font-bold mb-2">12</h3>
+                                                <p class="text-xs text-blue-200">Matches potenciales hoy</p>
+                                                <button class="mt-4 w-full bg-white/20 hover:bg-white/30 text-white py-1.5 rounded text-xs font-bold transition">Revisar</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                            <div class="flex justify-between mb-4">
+                                                <div class="w-10 h-10 bg-green-50 text-green-600 rounded-lg flex items-center justify-center"><i class="fa-solid fa-money-bill-trend-up"></i></div>
+                                                <span class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded h-fit">+15%</span>
+                                            </div>
+                                            <h3 class="text-2xl font-black text-slate-900">$ 4.2M</h3>
+                                            <p class="text-xs text-slate-400">Ingresos proyectados</p>
+                                        </div>
+
+                                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                            <div class="flex justify-between mb-4">
+                                                <div class="w-10 h-10 bg-slate-50 text-slate-500 rounded-lg flex items-center justify-center"><i class="fa-solid fa-database"></i></div>
+                                            </div>
+                                            <h3 class="text-2xl font-black text-slate-900">850</h3>
+                                            <p class="text-xs text-slate-400">Leads en base de datos</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Recent Activity List -->
+                                    <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                        <h4 class="font-bold text-slate-800 mb-4 text-sm">Actividad Reciente</h4>
+                                        <div class="space-y-4">
+                                            <div class="flex items-center justify-between pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                                                    <div>
+                                                        <div class="text-sm font-bold text-slate-700">Comisión Aprobada</div>
+                                                        <div class="text-xs text-slate-400">Apto 302 - Proyecto Terra</div>
+                                                    </div>
+                                                </div>
+                                                <span class="text-xs font-bold text-slate-800">$ 1.2M</span>
+                                            </div>
+                                            <div class="flex items-center justify-between pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs"><i class="fa-solid fa-magnifying-glass"></i></div>
+                                                    <div>
+                                                        <div class="text-sm font-bold text-slate-700">Nuevo Match Detectado</div>
+                                                        <div class="text-xs text-slate-400">Cliente busca en Zona Rosa</div>
+                                                    </div>
+                                                </div>
+                                                <button class="text-xs text-brand font-bold hover:underline">Ver</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- VIEW: OFERTAS -->
+                                <div x-show="currentTab === 'ofertas'" x-cloak x-transition.opacity.duration.300ms class="space-y-6">
+                                    <div class="border-b border-slate-200 pb-4 flex justify-between items-center">
+                                        <div>
+                                            <h2 class="text-xl font-bold text-slate-900">Buzón de Ofertas</h2>
+                                            <p class="text-xs text-slate-500">Gestiona las solicitudes de compra de tus leads.</p>
+                                        </div>
+                                        <div class="flex bg-slate-100 p-1 rounded-lg">
+                                            <button class="px-3 py-1 bg-white shadow-sm rounded-md text-xs font-bold text-slate-800">Recibidas</button>
+                                            <button class="px-3 py-1 text-xs font-medium text-slate-500 hover:text-slate-700">Enviadas</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Offer Card -->
+                                    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-brand/30 transition-colors">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div class="flex gap-3">
+                                                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=100&q=80" class="w-16 h-16 rounded-lg object-cover">
+                                                <div>
+                                                    <div class="flex items-center gap-2 mb-1">
+                                                        <span class="bg-yellow-100 text-yellow-700 text-[10px] font-black uppercase px-2 py-0.5 rounded">Pendiente</span>
+                                                        <span class="text-[10px] text-slate-400">Hace 2 horas</span>
+                                                    </div>
+                                                    <h3 class="font-bold text-slate-900 text-sm">Casa Campestre La Calera</h3>
+                                                    <p class="text-slate-500 text-xs">$ 1.200.000.000 COP</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-surface p-3 rounded-lg space-y-2 mb-4">
+                                            <div class="flex justify-between text-xs">
+                                                <span class="text-slate-500">Solicitante:</span>
+                                                <span class="font-bold text-slate-700">Inmobiliaria VIP (Aliado)</span>
+                                            </div>
+                                            <div class="flex justify-between text-xs">
+                                                <span class="text-slate-500">Comisión ofrecida por lead:</span>
+                                                <span class="font-bold text-green-600 bg-green-50 px-1 rounded">20% de la comisión total</span>
+                                            </div>
+                                            <div class="flex justify-between text-xs">
+                                                <span class="text-slate-500">Tu ganancia estimada:</span>
+                                                <span class="font-bold text-slate-900">$ 7.200.000 COP</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-3">
+                                            <button class="flex-1 bg-brand text-white py-2 rounded-lg text-xs font-bold shadow-lg shadow-brand/20 hover:bg-brand-dark transition">Aceptar Oferta</button>
+                                            <button class="flex-1 border border-slate-200 text-slate-500 py-2 rounded-lg text-xs font-bold hover:bg-slate-50 transition">Rechazar</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Offer Card 2 (Dimmed) -->
+                                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-5 opacity-60">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="bg-slate-200 text-slate-600 text-[10px] font-black uppercase px-2 py-0.5 rounded">Expirada</span>
+                                            <span class="text-[10px] text-slate-400">Ayer</span>
+                                        </div>
+                                        <h3 class="font-bold text-slate-700 text-sm">Apartamento Chico Norte</h3>
+                                    </div>
+                                </div>
+
+                                <!-- VIEW: COMISIONES -->
+                                <div x-show="currentTab === 'comisiones'" x-cloak x-transition.opacity.duration.300ms class="space-y-6">
+                                    <div class="border-b border-slate-200 pb-4">
+                                        <h2 class="text-xl font-bold text-slate-900">Cartera Digital</h2>
+                                        <p class="text-xs text-slate-500">Saldo disponible y retiros.</p>
+                                    </div>
+
+                                    <div class="bg-slate-900 rounded-xl p-6 text-white relative overflow-hidden">
+                                        <div class="absolute right-0 bottom-0 opacity-10 transform translate-x-4 translate-y-4">
+                                            <i class="fa-brands fa-cc-visa text-9xl"></i>
+                                        </div>
+                                        <p class="text-slate-400 text-xs uppercase font-bold mb-1">Saldo Disponible</p>
+                                        <h3 class="text-4xl font-mono font-bold mb-6">$ 4.500.000</h3>
+                                        
+                                        <div class="flex gap-4">
+                                            <button class="bg-white text-slate-900 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Retirar Fondos</button>
+                                            <button class="bg-white/10 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/20 transition">Ver Movimientos</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                                        <table class="w-full text-xs text-left">
+                                            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                                                <tr>
+                                                    <th class="px-4 py-3">Fecha</th>
+                                                    <th class="px-4 py-3">Concepto</th>
+                                                    <th class="px-4 py-3 text-right">Monto</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100">
+                                                <tr>
+                                                    <td class="px-4 py-3 text-slate-500">24 Dic 2025</td>
+                                                    <td class="px-4 py-3 font-bold text-slate-700">Venta Lead #4829</td>
+                                                    <td class="px-4 py-3 text-right text-green-600 font-bold">+$ 1.200.000</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="px-4 py-3 text-slate-500">20 Dic 2025</td>
+                                                    <td class="px-4 py-3 font-bold text-slate-700">Retiro Bancario</td>
+                                                    <td class="px-4 py-3 text-right text-slate-400 font-medium">-$ 3.000.000</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="px-4 py-3 text-slate-500">18 Dic 2025</td>
+                                                    <td class="px-4 py-3 font-bold text-slate-700">Venta Lead #3321</td>
+                                                    <td class="px-4 py-3 text-right text-green-600 font-bold">+$ 2.450.000</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE FAQ (NUEVA) -->
+    <section id="faq" class="py-20 bg-slate-50 border-t border-slate-200" x-data="{ selected: null }">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-brand font-bold uppercase tracking-widest text-xs mb-2">Preguntas Frecuentes</h2>
+                <h3 class="text-3xl font-bold text-slate-900">Resolvemos tus dudas</h3>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <button @click="selected !== 1 ? selected = 1 : selected = null" class="w-full px-6 py-4 text-left flex justify-between items-center font-bold text-slate-800 hover:bg-slate-50 transition">
+                        <span>¿Es legal compartir mis leads con Matchprop? (Habeas Data)</span>
+                        <i class="fa-solid fa-chevron-down transition-transform duration-300" :class="selected === 1 ? 'rotate-180 text-brand' : 'text-slate-400'"></i>
+                    </button>
+                    <div class="faq-content bg-slate-50 px-6 overflow-hidden" :style="selected === 1 ? 'max-height: 200px; padding-bottom: 1.5rem; opacity: 1;' : 'max-height: 0; padding-bottom: 0; opacity: 0;'">
+                        <p class="text-sm text-slate-600 pt-4 border-t border-slate-200">
+                            Sí. Matchprop opera bajo un estricto cumplimiento de la Ley 1581 de 2012. Actuamos como "Encargados del Tratamiento" de tu base de datos con fines de alianzas comerciales. Tus leads son anonimizados hasta que hay un match confirmado.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <button @click="selected !== 2 ? selected = 2 : selected = null" class="w-full px-6 py-4 text-left flex justify-between items-center font-bold text-slate-800 hover:bg-slate-50 transition">
+                        <span>¿Mi competencia verá mis datos?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform duration-300" :class="selected === 2 ? 'rotate-180 text-brand' : 'text-slate-400'"></i>
+                    </button>
+                    <div class="faq-content bg-slate-50 px-6 overflow-hidden" :style="selected === 2 ? 'max-height: 200px; padding-bottom: 1.5rem; opacity: 1;' : 'max-height: 0; padding-bottom: 0; opacity: 0;'">
+                        <p class="text-sm text-slate-600 pt-4 border-t border-slate-200">
+                            No. El sistema es "ciego". La Inmobiliaria B solo ve: "Cliente busca Apto en Rosales, Presupuesto $2.000M". No ve el nombre, ni el teléfono, ni la fuente original hasta que tú apruebas la transacción o vendes el lead.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <button @click="selected !== 3 ? selected = 3 : selected = null" class="w-full px-6 py-4 text-left flex justify-between items-center font-bold text-slate-800 hover:bg-slate-50 transition">
+                        <span>¿Cómo garantizan el pago de mi comisión?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform duration-300" :class="selected === 3 ? 'rotate-180 text-brand' : 'text-slate-400'"></i>
+                    </button>
+                    <div class="faq-content bg-slate-50 px-6 overflow-hidden" :style="selected === 3 ? 'max-height: 200px; padding-bottom: 1.5rem; opacity: 1;' : 'max-height: 0; padding-bottom: 0; opacity: 0;'">
+                        <p class="text-sm text-slate-600 pt-4 border-t border-slate-200">
+                            Firmamos un contrato de corretaje digital vinculante antes de revelar los datos de contacto al comprador del lead. Además, Matchprop actúa como intermediario de confianza en el flujo de la información.
+                        </p>
+                    </div>
+                </div>
+                
+                 <!-- FAQ Item 4 -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <button @click="selected !== 4 ? selected = 4 : selected = null" class="w-full px-6 py-4 text-left flex justify-between items-center font-bold text-slate-800 hover:bg-slate-50 transition">
+                        <span>¿Puedo integrar Matchprop con mi CRM (Wasi, HubSpot)?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform duration-300" :class="selected === 4 ? 'rotate-180 text-brand' : 'text-slate-400'"></i>
+                    </button>
+                    <div class="faq-content bg-slate-50 px-6 overflow-hidden" :style="selected === 4 ? 'max-height: 200px; padding-bottom: 1.5rem; opacity: 1;' : 'max-height: 0; padding-bottom: 0; opacity: 0;'">
+                        <p class="text-sm text-slate-600 pt-4 border-t border-slate-200">
+                            Sí. Ofrecemos importación vía CSV compatible con todos los CRMs y una API para planes Enterprise que permite sincronización en tiempo real.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FORMULARIO DE ACCESO -->
+    <section id="registro" class="py-24 bg-slate-900 relative overflow-hidden" x-data="{ state: 'idle', email: '' }">
+        <!-- Abstract Bg -->
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-brand/20 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+            <span class="text-brand font-bold tracking-widest text-xs uppercase mb-4 block">Lista de Espera B2B</span>
+            <h2 class="text-3xl lg:text-5xl font-extrabold text-white mb-6 leading-tight">
+                Convierte tu Base de Datos <br> en un Activo Líquido
+            </h2>
+            
+            <p class="text-slate-400 text-lg mb-10 max-w-2xl mx-auto">
+                Estamos abriendo cupos para inmobiliarias en Colombia. <br class="hidden md:block">
+                Regístrate para obtener acceso anticipado.
+            </p>
+
+            <div x-show="state === 'idle'" class="max-w-md mx-auto bg-white/5 p-2 rounded-2xl backdrop-blur-sm border border-white/10 shadow-2xl transition-all duration-300">
+                <form @submit.prevent="state = 'loading'; setTimeout(() => state = 'success', 1500)" class="flex flex-col sm:flex-row gap-2">
+                    <input type="email" x-model="email" required placeholder="gerencia@inmobiliaria.com" class="flex-1 bg-transparent text-white placeholder-slate-500 px-6 py-4 rounded-xl focus:outline-none font-medium border border-transparent focus:border-brand/50 transition-colors">
+                    
+                    <button type="submit" class="bg-brand hover:bg-brand-dark text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-brand/20 transition-all flex items-center justify-center min-w-[160px] group">
+                        <span x-show="state !== 'loading'">Solicitar Demo</span>
+                        <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div x-show="state === 'loading'" class="text-white text-xl py-8" x-cloak>
+                <i class="fa-solid fa-circle-notch fa-spin text-brand text-3xl mb-2"></i>
+                <p class="text-sm font-bold opacity-70">Procesando solicitud...</p>
+            </div>
+
+            <div x-show="state === 'success'" x-transition class="bg-green-500/10 border border-green-500/30 p-8 rounded-2xl max-w-md mx-auto backdrop-blur-md text-center" x-cloak>
+                <div class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg shadow-green-500/20"><i class="fa-solid fa-check"></i></div>
+                <h3 class="font-bold text-white text-2xl mb-2">¡Solicitud Recibida!</h3>
+                <p class="text-green-100 text-sm mb-6">Nuestro equipo B2B contactará a <span x-text="email" class="font-bold text-white"></span> en menos de 24 horas para validar tu empresa.</p>
+                <button @click="state = 'idle'; email = ''" class="text-xs font-bold text-white underline opacity-70 hover:opacity-100">Registrar otro correo</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER ACTUALIZADO -->
+    <footer class="bg-slate-950 text-slate-500 py-12 border-t border-slate-900">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-sm">
+            <div class="flex items-center gap-2 opacity-70 hover:opacity-100 transition-opacity">
+                <div class="w-6 h-6 bg-slate-800 rounded flex items-center justify-center text-white text-xs font-bold">M</div>
+                <span class="font-bold tracking-tight text-slate-400">Matchprop Partners</span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6">
+                <!-- Enlaces funcionales con Alpine -->
+                <button @click="activeModal = 'privacy'" class="hover:text-white transition">Privacidad de Datos</button>
+                <button @click="activeModal = 'terms'" class="hover:text-white transition">Términos de Uso</button>
+                <button @click="activeModal = 'nda'" class="hover:text-white transition">Acuerdo de Confidencialidad</button>
+            </div>
+            <p class="text-xs opacity-40">© 2025 Matchprop Technologies. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- MODALES LEGALES (Overlay) -->
+    <div x-show="activeModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4" x-cloak>
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="activeModal = null"></div>
+        
+        <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto relative z-10 p-8 shadow-2xl" 
+             x-transition:enter="transition ease-out duration-300" 
+             x-transition:enter-start="opacity-0 scale-95" 
+             x-transition:enter-end="opacity-100 scale-100">
+            
+            <button @click="activeModal = null" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
+
+            <!-- CONTENIDO DINÁMICO DEL MODAL -->
+            
+            <!-- 1. PRIVACIDAD -->
+            <div x-show="activeModal === 'privacy'">
+                <h3 class="text-2xl font-bold text-slate-900 mb-6">Política de Tratamiento de Datos Personales</h3>
+                <div class="prose prose-sm text-slate-600 space-y-4">
+                    <p><strong>1. Marco Legal:</strong> Matchprop cumple estrictamente con la Ley 1581 de 2012 y el Decreto 1377 de 2013 de la República de Colombia.</p>
+                    <p><strong>2. Rol en el Tratamiento:</strong> Matchprop actúa en calidad de Encargado del Tratamiento. La inmobiliaria que sube la información actúa como Responsable del Tratamiento y garantiza haber obtenido la autorización previa de los titulares.</p>
+                    <p><strong>3. Finalidad:</strong> Los datos serán utilizados exclusivamente para fines de inteligencia de negocios, matchmaking inmobiliario y generación de oportunidades comerciales cruzadas.</p>
+                    <p><strong>4. Derechos del Titular:</strong> Los titulares pueden ejercer sus derechos de acceso, rectificación y supresión enviando un correo a legal@matchprop.com.</p>
+                </div>
+            </div>
+
+            <!-- 2. TÉRMINOS -->
+            <div x-show="activeModal === 'terms'">
+                <h3 class="text-2xl font-bold text-slate-900 mb-6">Términos y Condiciones de Uso</h3>
+                <div class="prose prose-sm text-slate-600 space-y-4">
+                    <p><strong>1. Objeto:</strong> Matchprop es una plataforma tecnológica B2B que facilita la conexión entre oferta y demanda inmobiliaria mediante el análisis de datos.</p>
+                    <p><strong>2. Elegibilidad:</strong> El servicio está reservado exclusivamente para empresas inmobiliarias, constructoras y agentes independientes legalmente constituidos.</p>
+                    <p><strong>3. Responsabilidad sobre la Información:</strong> El Usuario garantiza la veracidad y legalidad de la información cargada en la plataforma.</p>
+                    <p><strong>4. Pagos y Comisiones:</strong> Matchprop cobrará las tarifas acordadas por servicio de matchmaking o porcentaje de comisión según el plan suscrito.</p>
+                </div>
+            </div>
+
+            <!-- 3. NDA -->
+            <div x-show="activeModal === 'nda'">
+                <h3 class="text-2xl font-bold text-slate-900 mb-6">Acuerdo de Confidencialidad y No Elusión</h3>
+                <div class="prose prose-sm text-slate-600 space-y-4">
+                    <p><strong>1. Información Confidencial:</strong> Se considera confidencial toda información técnica, financiera y comercial revelada a través de la plataforma, incluyendo datos de leads.</p>
+                    <p><strong>2. No Elusión (Non-Circumvention):</strong> Las partes acuerdan no contactar directamente a los clientes presentados por la plataforma con el fin de evitar el pago de las comisiones correspondientes a Matchprop.</p>
+                    <p><strong>3. Vigencia:</strong> Este acuerdo tiene vigencia indefinida mientras el usuario mantenga una cuenta activa y subsistirá por 2 años después de su terminación.</p>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-slate-100 flex justify-end">
+                <button @click="activeModal = null" class="bg-brand text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-brand-dark">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
